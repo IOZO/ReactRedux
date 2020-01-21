@@ -1,3 +1,3 @@
 # ReactRedux-NetFlix like app
 
-ceci est notre mini netflix app faite pour experiment le dev react
+ceci est notre mini netflix app faite pour experimenter le dev react
