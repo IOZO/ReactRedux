@@ -3,7 +3,9 @@ import '../components/search-bar'
 import SearchBar from '../components/search-bar'
 import VideoList from './video-list'
 import VideoDetails from '../components/video-details'
+import Video from '../components/video'
 import axios from 'axios';
+import { $CombinedState } from 'redux'
 
 
 const API_END_POINT = "https://api.themoviedb.org/3/";
@@ -20,26 +22,63 @@ class App extends Component{
         this.state={currentMovie:{},movieList:{}}
     }
 
+    
     componentWillMount(){
-        axios.get(`${API_END_POINT}${POPULAR_MOVIES_URL}&${API_KEY}`).then((response)=>
-        {
-            this.setState({currentMovie:response.data.results[0]});
-            this.setState({movieList:response.data.results.slice(1,6)});
-
-            console.log("Movie : "+ JSON.stringify(this.state.currentMovie));
-            console.log("Other Movies : " + JSON.stringify(this.state.movieList));
-            
-        });
+        this.initMovies();
+    }
+    
+    initMovies(){
+            axios.get(`${API_END_POINT}${POPULAR_MOVIES_URL}&${API_KEY}`)
+            .then((response)=>{
+                this.setState(
+                        {
+                         currentMovie:response.data.results[0],
+                         movieList:response.data.results.slice(1,6)
+                        },
+                        (()=>{
+                            this.applyVideoToCurrentMovie();
+                        })
+                    );
+            });      
     }
 
+    applyVideoToCurrentMovie(){
+        axios.get(`${API_END_POINT}movie/${this.state.currentMovie.id}?append_to_response=videos&include_adult=false&${API_KEY}`)
+        .then((response)=>{
+            console.log(response);
+            if(response.data.videos.results.length > 0)
+            {
+                const youTubeVideo = response.data.videos.results[0].key;
+                let newCurrentMovieState = this.state.currentMovie;
+                newCurrentMovieState.videoId = youTubeVideo;
+                this.setState({currentMovie : newCurrentMovieState});
+            }
+        });    
+    }
+    
     render(){
-                return (  
+        const renderList = () =>{
+        if(this.state.movieList.length > 0)
+            {
+                return(<VideoList movieList={this.state.movieList} />);
+            }
+        }
+        
+        return (  
                 <div>
-                    <div><SearchBar/></div>
-                    <div><VideoList/></div>
-                    <div><VideoDetails title={this.state.currentMovie.title} description={this.state.currentMovie.overview}/></div>
-  
-                 </div>
+                    <div className="search_bar">
+                        <SearchBar />
+                    </div>
+                    <div className="row">
+                        <div className="col-md-8">
+                            <Video videoId={this.state.currentMovie.videoId}/>
+                            <VideoDetails title={this.state.currentMovie.title} description={this.state.currentMovie.overview}/>
+                        </div>
+                        <div className="col-md-4">
+                            {renderList()}
+                        </div>
+                    </div>
+                </div>
             );
         }
   }
