@@ -45,7 +45,6 @@ class App extends Component{
     applyVideoToCurrentMovie(){
         axios.get(`${API_END_POINT}movie/${this.state.currentMovie.id}?append_to_response=videos&include_adult=false&${API_KEY}`)
         .then((response)=>{
-            console.log(response);
             if(response.data.videos.results.length > 0)
             {
                 const youTubeVideo = response.data.videos.results[0].key;
@@ -55,12 +54,18 @@ class App extends Component{
             }
         });    
     }
+
+    receiveCallback(movie){
+        this.setState({currentMovie:movie},function(){
+            this.applyVideoToCurrentMovie();
+        });
+    }
     
     render(){
         const renderList = () =>{
         if(this.state.movieList.length > 0)
             {
-                return(<VideoList movieList={this.state.movieList} />);
+                return(<VideoList movieList={this.state.movieList} callback={this.receiveCallback.bind(this)}/>)
             }
         }
         
