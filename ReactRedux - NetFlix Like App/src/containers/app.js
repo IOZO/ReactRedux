@@ -10,6 +10,7 @@ import { $CombinedState } from 'redux'
 
 const API_END_POINT = "https://api.themoviedb.org/3/";
 const POPULAR_MOVIES_URL = "discover/movie?language=fr&sort_by=popularity.desc&include_adult=false&append_to_response=images";
+const SEARCH_URL = "search/movie?language=fr&include_adult=false"
 const API_KEY = "api_key=7f65b0d50657cd375043d79b5445533b";
 
 
@@ -62,8 +63,25 @@ class App extends Component{
     }
     
     onClickSearch(searchText){
-        console.log("search text : "+searchText);
-        
+        if(searchText)
+        {
+            axios.get(`${API_END_POINT}${SEARCH_URL}&query=${searchText}&${API_KEY}`)
+            .then((response)=>{
+                if(response.data && response.data.results[0]){
+                    if(response.data.results[0].id != this.state.currentMovie.id)
+                    {
+                        this.setState(
+                            {
+                             currentMovie:response.data.results[0]
+                            },
+                            (()=>{
+                                this.applyVideoToCurrentMovie();
+                            })
+                        );
+                    }
+                }
+                });    
+        } 
     }
 
     render(){
