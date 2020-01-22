@@ -55,24 +55,29 @@ class App extends Component{
         });    
     }
 
-    receiveCallback(movie){
+    onClickListItem(movie){
         this.setState({currentMovie:movie},function(){
             this.applyVideoToCurrentMovie();
         });
     }
     
+    onClickSearch(searchText){
+        console.log("search text : "+searchText);
+        
+    }
+
     render(){
         const renderList = () =>{
         if(this.state.movieList.length > 0)
             {
-                return(<VideoList movieList={this.state.movieList} callback={this.receiveCallback.bind(this)}/>)
+                return(<VideoList movieList={this.state.movieList} callback={this.onClickListItem.bind(this)}/>)
             }
         }
         
         return (  
                 <div>
                     <div className="search_bar">
-                        <SearchBar />
+                        <SearchBar callback={this.onClickSearch.bind(this)}/>
                     </div>
                     <div className="row">
                         <div className="col-md-8">
