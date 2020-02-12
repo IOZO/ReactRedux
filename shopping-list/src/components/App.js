@@ -1,6 +1,7 @@
 import React from 'react';
 import Form from './Form'
 import ItemList from './ItemList'
+import {connect} from 'react-redux' 
 
 class App extends React.Component
 {
@@ -26,10 +27,17 @@ class App extends React.Component
             <div>
                 <h3>Liste de courses</h3>
                 <Form formTitle={this.state.titreFormulaire} addArticle={this.addArticle} />
-                <ItemList articles={this.state.articles}/>
+                <ItemList articles={this.props.articles}/>
             </div>
         );
     }
+} // end class
+
+const mapStateToProps = (store) => {
+    return {
+        articles:store.articles
+    }
 }
 
-export default App;
+// export default App;
+export default connect(mapStateToProps)(App);
