@@ -11,14 +11,7 @@ class App extends React.Component
     };
 
     addArticle = (article) => {
-
-        console.log(this);
-        console.log(this.state);
-
-        let oldarticles = this.state.articles;
-        article.id = Date.now();
-        let newArticles = [...oldarticles,article];
-        this.setState({articles: newArticles});
+        this.props.dispatch({type:'ADD_ARTICLE',payload:article});
     }
 
     render()
