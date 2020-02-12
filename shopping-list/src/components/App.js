@@ -10,21 +10,24 @@ class App extends React.Component
         articles : []
     };
 
-    addArticle = (article) => {
-        this.props.dispatch({type:'ADD_ARTICLE',payload:article});
-    }
-
     render()
     {
         return (
             <div>
                 <h3>Liste de courses</h3>
-                <Form formTitle={this.state.titreFormulaire} addArticle={this.addArticle} />
+                <Form formTitle={this.state.titreFormulaire} addArticle={this.props.addArticle} />
                 <ItemList articles={this.props.articles}/>
             </div>
         );
     }
 } // end class
+
+const addArticleActionCreator = (article) => {
+    return{
+        type:'ADD_ARTICLE',
+        payload:article
+    }
+}
 
 const mapStateToProps = (store) => {
     return {
@@ -32,5 +35,13 @@ const mapStateToProps = (store) => {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addArticle:(article)=>{
+            dispatch(addArticleActionCreator(article));
+        }
+    }
+}
+
 // export default App;
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps,mapDispatchToProps)(App);
